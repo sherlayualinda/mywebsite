@@ -3,18 +3,16 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User,auth
 
-# from django.core.files.storage import FileSystemStorage
+from django.core.files.storage import FileSystemStorage
 
 from django.contrib import messages
+from data.forms import DocumentForm
+from data.models import Document
 
 # from .forms import CreateUserForm
 
 
-# import os
-# from flask import Flask, request, url_for, send_from_directory
-# from werkzeug import secure_filename
-# import MySQLdb
-# import glob
+
 
 def registerPage(request):
 	
@@ -79,69 +77,25 @@ def buttons(request):
 def history(request):
 	return render(request,'history.html')	
 
-def input(request):
-	return render(request,'input.html')	 
+def document_list(request):	
+	documents = Document.objects.all()
+	return render(request,'list.html',{
+		'documents': documents
+		})	 	
 
 def upload(request):
-	return render(request,'upload.html')	 	
+	
+	if request.method == 'POST':
+		form = DocumentForm(request.POST, request.FILES)
+		if form.is_valid():
+			form.save()
+			return redirect('document_list')
+	else:
+		form = DocumentForm()
+	return render(request,'upload.html',{
+		'form': form
+		})
 
-
-
-# UPLOAD_FOLDER ="/tmp/"
-# ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'csv'])
-# app = Flask(__name__)
-# app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-
-# def allowed_file(filename):
-#   # this has changed from the original example because the original did not work for me
-#     return filename[-3:].lower() in ALLOWED_EXTENSIONS
-
-# @app.route('/', methods=['GET', 'POST'])
-# def upload_file():
-#     if request.method == 'POST':
-#         file = request.files['file']
-#         if file and allowed_file(file.filename):
-#             # print '**found file', file.filename
-#             filename = secure_filename(file.filename)
-#             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-
-#         conn = MySQLdb.connect (host="localhost", port=3306, user="root",passwd=" ",db="mywebsite", local_infile = 1)
-#         x = conn.cursor()
-#         # print 'filename'
-#         sql = """LOAD DATA LOCAL INFILE '{}'
-#         INTO TABLE test
-#         FIELDS TERMINATED BY ','
-#         OPTIONALLY ENCLOSED BY '"'
-#         LINES TERMINATED BY '\n'
-#         IGNORE 1 LINES
-#         """
-#         os.chdir(UPLOAD_FOLDER)
-#         dirfiles=glob.glob("*.csv")
-#         for file_name in dirfiles:
-#           # print file_name
-#           if file_name==filename:
-#             try:
-#                 cursor = conn.cursor()
-#                 file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-#                 # print sql.format(file_path)
-#                 cursor.execute(sql.format(file_path))
-#                 conn.commit()
-#                 # print "succses"
-#             except Exception, e:
-#                 # print e
-#                 # Rollback in case there is any error
-#                 conn.rollback()
-#                 # for browser, add 'redirect' function on top of 'url_for'
-#             return url_for('uploaded_file',
-#                                     filename=filename)
-#     return render(request, 'input.html') 
-
-# @app.route('/uploads/<filename>')
-# def uploaded_file(filename):
-#     return send_from_directory(app.config['UPLOAD_FOLDER'],
-#                                filename)
-
-
-
+	 	
 
 

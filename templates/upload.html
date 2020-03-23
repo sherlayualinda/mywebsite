@@ -51,7 +51,7 @@
 
       <!-- Nav Item - Charts -->
       <li class="nav-item">
-          <a class="nav-link" href="{% url 'input'%}">
+          <a class="nav-link" href="{% url 'document_list'%}">
             <i class="fas fa-fw fa-chart-area"></i>
             <span>Upload Data</span></a>
       </li> 
@@ -261,8 +261,9 @@
           <h2>Upload Your Data E-commerce</h2>
           <form method="POST" enctype="multipart/form-data">
             {%csrf_token%}
-            <input type="file" name="document">
-            <button type="submit">Upload File</button>
+            {{form.as_p}}
+            <!-- <input type="file" name="document"> -->
+            <button type="submit" class="btn btn-primary">Upload File</button>
             
           </form>
             
